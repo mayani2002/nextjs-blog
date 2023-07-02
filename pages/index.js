@@ -1,7 +1,23 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import utilStyles from '../styles/utils.module.css';
+import Link from 'next/link';
+import Date from '../components/date';
+import { getSortedPostsData } from '../lib/posts';
 
-export default function Home() {
+export async function getStaticProps() {
+  const allPostsData = getSortedPostsData();
+  return {
+    props: {
+      allPostsData,
+    },
+  };
+}
+
+
+export default function Home({ allPostsData }) {
+
+  console.log(allPostsData);
   return (
     <div className={styles.container}>
       <Head>
@@ -11,12 +27,12 @@ export default function Home() {
 
       <main>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Learn <Link href="https://nextjs.org">Next.js!</Link>
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
+          <p className={styles.description}>
+            Get started by editing <code>pages/index.js</code>
+          </p>
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
@@ -46,6 +62,21 @@ export default function Home() {
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
           </a>
+
+          <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+            <h2 className={utilStyles.headingLg}>Blog</h2>
+            <ul className={utilStyles.list}>
+              {allPostsData.map(({ id, date, title }) => (
+                <li className={styles.card} key={id}>
+                  <Link  href={`/posts/${id}`}>{title}</Link>
+                  <br />
+                  <small className={utilStyles.lightText}>
+                    <Date dateString={date} />
+                  </small>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
       </main>
 
